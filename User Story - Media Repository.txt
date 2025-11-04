@@ -1,0 +1,9 @@
+User Story: Media Repository
+
+As application developer I need a digital asset management system to structure my stored images so that my images are available for simple retrieval.
+
+Acceptance Criteria:
+
+Functional - The structure of the repository should include application -> category -> necessary subfolders if needed
+
+Non-functional - The service needs to be structured in a way that is standardized such that images can be retrieved upon a request with minimal potential for accidental errors (similar files for different applications). It should successfully store and retrieve a file with greater than 99% accuracy.
