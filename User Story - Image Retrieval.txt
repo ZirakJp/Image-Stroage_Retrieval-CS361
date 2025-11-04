@@ -1,9 +1,26 @@
 User Story: Image Retrieval
 
-As application developer I want to be able to retrieve stored images so that my images are available for use in my applications.
+  As an application developer,
+  I need to retrieve stored images from the digital asset management system
+  so that my applications can dynamically load the correct media files for display or processing.
 
 Acceptance Criteria:
 
-Functional - The service needs to be capable of retrieving a specific image when given a json file-based request.
+Functional Requirements
 
-Non-functional - The image should be retrieved extremely quickly (faster than 1.5 seconds) and should have an extremely high rate of accuracy (higher than 99.9%).
+Direct Retrieval by Path
+
+  Given a client provides a valid path in the format; /{application}/{category}/{filename}.{ext}
+  Then the service should return:
+      HTTP 200 OK
+      The binary image file or a JSON response containing the file’s URL, metadata, and access permissions.
+
+Non-Functional Requirements
+
+Reliability
+
+  Retrieval operations must succeed ≥99% of the time under standard network conditions.
+
+Performance
+
+  Average response time for single-image retrieval must be under 300ms.
