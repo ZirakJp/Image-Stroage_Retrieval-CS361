@@ -1,26 +1,29 @@
 User Story: Image Storage
 
   As an application developer,
-  I need to retrieve stored images from the digital asset management system
-  so that my applications can dynamically load the correct media files for display or processing.
+  I want to be able to store images in a structured and standardized way,
+  so that my images are available for simple and reliable retrieval by various applications.
 
 Acceptance Criteria:
 
 Functional Requirements
 
-Direct Retrieval by Path
+Upload Endpoint
 
-  Given a client provides a valid path in the format; /{application}/{category}/{filename}.{ext}
-  Then the service should return:
-      HTTP 200 OK
-      The binary image file or a JSON response containing the file’s URL, metadata, and access permissions.
+Given a valid image file and metadata payload are provided by a client via REST API (e.g., POST /api/v1/assets/{application}/{category}),
+  When the request is sent with appropriate headers and body content,
+  Then the system should:
+    Validate file type and size (e.g., .png, .jpg, .webp, .svg)
+    Store the file in the correct directory structure: 
+      /application/category/filename.ext
+    Return a JSON response with status and metadata
 
 Non-Functional Requirements
 
-Reliability
-
-  Retrieval operations must succeed ≥99% of the time under standard network conditions.
-
 Performance
 
-  Average response time for single-image retrieval must be under 300ms.
+  Image uploads should complete in under 500ms for average file sizes (<1 MB) under normal network conditions.
+
+Scalability
+
+  The system should support tens of thousands of stored images without directory degradation or slow lookups.
