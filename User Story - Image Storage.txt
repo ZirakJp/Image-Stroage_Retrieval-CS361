@@ -1,0 +1,9 @@
+User Story: Image Storage
+
+As application developer I want to be able to store images so that my images are available for simple retrieval.
+
+Acceptance Criteria:
+
+Functional - The service needs to be capable of storing an image in a way that it is easily discerned for retrieval.
+
+Non-functional - The service needs to be able to accommodate a large quantity of images (several thousand) in addition to performing the storage quickly so that applications relying on the quick retrieval of stored images do not suffer lengthy wait-times.
