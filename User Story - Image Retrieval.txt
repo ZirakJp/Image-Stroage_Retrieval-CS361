@@ -1,0 +1,9 @@
+User Story: Image Retrieval
+
+As application developer I want to be able to retrieve stored images so that my images are available for use in my applications.
+
+Acceptance Criteria:
+
+Functional - The service needs to be capable of retrieving a specific image when given a json file-based request.
+
+Non-functional - The image should be retrieved extremely quickly (faster than 1.5 seconds) and should have an extremely high rate of accuracy (higher than 99.9%).
