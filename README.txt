@@ -95,4 +95,24 @@ Response
   
   Base64 encoding allows binary data to be transferred safely inside JSON, but it increases size by ~33%.
   
-  For production or large images, a multipart/form-data upload would be more efficient.          
+  For production or large images, a multipart/form-data upload would be more efficient.    
+
+7. UML
+  
+  Client                Flask Microservice            OS File System
+    |                           |                            |
+    |---- POST /upload -------->|                            |
+    |    JSON {images[...] }    |                            |
+    |                           |-- write files to /images -->|
+    |                           |                            |
+    |<--- JSON response --------|                            |
+    |   {"message": "..."}      |                            |
+    |                           |                            |
+    |---- POST /get ----------->|                            |
+    |    JSON {filenames[]}     |                            |
+    |                           |-- read files from /images->|
+    |                           |                            |
+    |<--- JSON response --------|                            |
+    |   {count, images[...] }   |                            |
+    |                           |                            |
+
