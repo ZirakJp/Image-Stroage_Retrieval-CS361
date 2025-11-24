@@ -4,10 +4,35 @@
 from flask import Flask, request, jsonify
 import base64
 import os
+from werkzeug.utils import secure_filename   # FIX: added for filename sanitization
 
 app = Flask(__name__)
 IMAGE_DIR = "images"
 os.makedirs(IMAGE_DIR, exist_ok=True)
+
+# ✅ FIX: define allowed extensions for content type validation
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
+
+# ✅ FIX: helper function for extension validation
+def allowed_file(filename):
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
+
+# ✅ FIX: extracted helper function to consolidate duplicate logic
+def save_image(filename, image_data):
+    filename = secure_filename(filename)   # FIX: sanitize filename
+    if not allowed_file(filename):         # FIX: validate extension
+        raise ValueError("Invalid file type")
+    try:
+        image_bytes = base64.b64decode(image_data)   # FIX: wrapped in try/except
+    except Exception:
+        raise ValueError("Invalid base64 data")
+    path = os.path.join(IMAGE_DIR, filename)
+    with open(path, 'wb') as f:
+        f.write(image_bytes)
+    return filename
 
 @app.route('/upload', methods=['POST'])
 def upload_images():
@@ -20,26 +45,22 @@ def upload_images():
         ]
     }
     """
-    data = request.get_json()
-    images = data.get('images')
+    request_data = request.get_json()   # FIX: renamed from "data" → clearer
+    images = request_data.get('images', [])
+    if not isinstance(images, list):
+        return jsonify({"error": "Invalid 'images' list"}), 400
 
-    if not images or not isinstance(images, list):
-        return jsonify({"error": "Missing or invalid 'images' list"}), 400
+    saved_files = []   # FIX: renamed from "saved" → clearer
+    for entry in images:   # FIX: renamed from "item" → clearer
+        try:
+            saved_files.append(save_image(entry['filename'], entry['image_data']))
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400   # FIX: explicit error return
 
-    saved = []
-    for item in images:
-        filename = item.get('filename')
-        image_data = item.get('image_data')
-        if not filename or not image_data:
-            continue
-
-        image_bytes = base64.b64decode(image_data)
-        path = os.path.join(IMAGE_DIR, filename)
-        with open(path, 'wb') as f:
-            f.write(image_bytes)
-        saved.append(filename)
-
-    return jsonify({"message": f"Saved {len(saved)} image(s)", "saved_files": saved}), 200
+    return jsonify({
+        "message": f"Saved {len(saved_files)} image(s)",
+        "saved_files": saved_files
+    }), 200
 
 
 @app.route('/get', methods=['POST'])
@@ -57,14 +78,17 @@ def get_images():
         ]
     }
     """
-    data = request.get_json()
-    filenames = data.get('filenames')
+    request_data = request.get_json()   # FIX: renamed from "data" → clearer
+    filenames = request_data.get('filenames')
 
     if not filenames or not isinstance(filenames, list):
         return jsonify({"error": "Missing or invalid 'filenames' list"}), 400
 
     results = []
     for filename in filenames:
+        filename = secure_filename(filename)   # FIX: sanitize filename
+        if not allowed_file(filename):         # FIX: validate extension
+            continue
         path = os.path.join(IMAGE_DIR, filename)
         if not os.path.exists(path):
             continue
