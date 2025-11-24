@@ -1,6 +1,3 @@
-
-# Image service should be able to receive a JSON with image data
-
 from flask import Flask, request, jsonify
 import base64
 import os
@@ -101,4 +98,3 @@ def get_images():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
